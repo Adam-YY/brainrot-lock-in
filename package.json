@@ -2,7 +2,7 @@
   "name": "Sahur-lock-in",
   "displayName": "Sahur Lock-In",
   "description": "Lock in on coding sessions and get warned when you switch away from VS Code.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "Adamyyyy",
   "repository": {
     "type": "git",
