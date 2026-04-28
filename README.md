@@ -44,19 +44,3 @@ npm run package:vsix
 ```
 
 This creates `tung-tung-lock-in.vsix` in the project root.
-
-## Publish To Marketplace
-
-1. Set your real publisher in `package.json` (`publisher`).
-2. Create/login your publisher with `vsce`.
-3. Publish:
-
-```bash
-npx vsce publish
-```
-
-## Notes
-
-- The native reminder currently targets Windows via a bundled PowerShell/WPF helper.
-- No external companion app is required.
-- Desktop VS Code only (not web).

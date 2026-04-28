@@ -1,12 +1,12 @@
 {
-  "name": "tung-tung-lock-in",
-  "displayName": "Tung Tung Lock-In",
+  "name": "Sahur-lock-in",
+  "displayName": "Sahur Lock-In",
   "description": "Lock in on coding sessions and get warned when you switch away from VS Code.",
   "version": "0.0.1",
-  "publisher": "your-publisher-name",
+  "publisher": "Adamyyyy",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourname/tung-tung-lock-in"
+    "url": "https://github.com/Adam-YY/brainrot-lock-in"
   },
   "license": "MIT",
   "engines": {
