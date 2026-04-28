@@ -1,0 +1,67 @@
+{
+  "name": "tung-tung-lock-in",
+  "displayName": "Tung Tung Lock-In",
+  "description": "Lock in on coding sessions and get warned when you switch away from VS Code.",
+  "version": "0.0.1",
+  "publisher": "your-publisher-name",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourname/tung-tung-lock-in"
+  },
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:tungTungLockIn.startSession",
+    "onCommand:tungTungLockIn.stopSession"
+  ],
+  "main": "./out/src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "tungTungLockIn.startSession",
+        "title": "Tung Tung Lock-In: Start Session"
+      },
+      {
+        "command": "tungTungLockIn.stopSession",
+        "title": "Tung Tung Lock-In: Stop Session"
+      }
+    ],
+    "configuration": {
+      "title": "Tung Tung Lock-In",
+      "properties": {
+        "tungTungLockIn.defaultSessionMinutes": {
+          "type": "number",
+          "default": 25,
+          "minimum": 1,
+          "description": "Default session length in minutes shown when starting a lock-in session."
+        },
+        "tungTungLockIn.focusGraceSeconds": {
+          "type": "number",
+          "default": 2,
+          "minimum": 0,
+          "description": "How long VS Code can stay unfocused before a distraction warning is triggered when returning."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc.cmd -p ./",
+    "watch": "tsc.cmd -watch -p ./",
+    "test": "npm run compile && mocha.cmd --timeout 5000 \"out/test/**/*.test.js\"",
+    "package": "npm run compile && vsce.cmd package --no-dependencies",
+    "package:vsix": "npm run compile && vsce.cmd package --no-dependencies -o tung-tung-lock-in.vsix"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.8",
+    "@types/node": "^22.10.2",
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^3.2.2",
+    "mocha": "^7.2.0",
+    "typescript": "^5.7.2"
+  }
+}
