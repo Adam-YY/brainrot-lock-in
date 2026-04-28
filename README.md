@@ -10,6 +10,14 @@ When a session is active and you switch away from VS Code for longer than the gr
 
 After you dismiss the warning, the distraction counter increases by 1. At session end, a modal summary displays the total.
 
+## Running the extension
+After installing the extension, go to your designated vs code window and do the following:
+1. Open command palette by pressing ctrl + shift + P
+2. type in "Tung Tung Lock-In: Start Session"
+3. Select your lock in session length, and have fun coding!
+
+To end the session, follow the same procedures but type in "Tung Tung Lock-In: Stop Session" instead
+
 ## Features
 
 - Start a lock-in timer in minutes
