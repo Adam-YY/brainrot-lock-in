@@ -24,19 +24,50 @@ Add-Type -AssemblyName WindowsBase
         ShowInTaskbar="True"
         Background="#120103">
   <Grid Background="#120103">
-    <MediaElement x:Name="BackgroundVideo"
-                  LoadedBehavior="Manual"
-                  UnloadedBehavior="Manual"
-                  Stretch="UniformToFill"
-                  Opacity="0.24"
-                  IsMuted="True" />
-    <MediaElement x:Name="ForegroundVideo"
-                  LoadedBehavior="Manual"
-                  UnloadedBehavior="Manual"
-                  Stretch="Uniform"
-                  Margin="24"
-                  Opacity="0.95"
-                  IsMuted="True" />
+    <Grid Margin="24"
+          ClipToBounds="True">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+
+      <MediaElement x:Name="LeftVideo"
+                    Grid.Column="0"
+                    LoadedBehavior="Manual"
+                    UnloadedBehavior="Manual"
+                    Stretch="UniformToFill"
+                    Opacity="0.92"
+                    IsMuted="True"
+                    RenderTransformOrigin="0.5,0.5">
+        <MediaElement.LayoutTransform>
+          <ScaleTransform ScaleX="-1"
+                          ScaleY="1" />
+        </MediaElement.LayoutTransform>
+      </MediaElement>
+
+      <MediaElement x:Name="CenterVideo"
+                    Grid.Column="1"
+                    LoadedBehavior="Manual"
+                    UnloadedBehavior="Manual"
+                    Stretch="UniformToFill"
+                    Opacity="0.96"
+                    IsMuted="True" />
+
+      <MediaElement x:Name="RightVideo"
+                    Grid.Column="2"
+                    LoadedBehavior="Manual"
+                    UnloadedBehavior="Manual"
+                    Stretch="UniformToFill"
+                    Opacity="0.92"
+                    IsMuted="True"
+                    RenderTransformOrigin="0.5,0.5">
+        <MediaElement.LayoutTransform>
+          <ScaleTransform ScaleX="-1"
+                          ScaleY="1" />
+        </MediaElement.LayoutTransform>
+      </MediaElement>
+    </Grid>
 
     <Border BorderBrush="#B3FF2B2B"
             BorderThickness="6"
@@ -47,14 +78,31 @@ Add-Type -AssemblyName WindowsBase
     <Canvas x:Name="TextCanvas"
             Margin="24,24,24,120"
             IsHitTestVisible="False">
-      <TextBlock x:Name="WarningText"
-                 Width="1500"
-                 Text="TUNG TUNG TUNG SAHUR"
-                 FontSize="88"
-                 FontWeight="Black"
-                 Foreground="#FFF1BE"
-                 TextAlignment="Center"
-                 TextWrapping="Wrap" />
+      <StackPanel x:Name="WarningBanner"
+                  Width="1500">
+        <TextBlock x:Name="WarningText1"
+                   Text="LOCK BACK IN"
+                   FontSize="128"
+                   FontWeight="Black"
+                   Foreground="#FFF1BE"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap" />
+        <TextBlock x:Name="WarningText2"
+                   Text="LOCK BACK IN"
+                   FontSize="128"
+                   FontWeight="Black"
+                   Foreground="#FFF1BE"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap" />
+        <TextBlock x:Name="LockBackInText"
+                   Margin="0,18,0,0"
+                   Text="LOCK BACK IN"
+                   FontSize="60"
+                   FontWeight="Bold"
+                   Foreground="#FFFF7A7A"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap" />
+      </StackPanel>
     </Canvas>
 
     <Button x:Name="DismissButton"
@@ -75,9 +123,11 @@ Add-Type -AssemblyName WindowsBase
 
 $reader = New-Object System.Xml.XmlNodeReader $xaml
 $window = [Windows.Markup.XamlReader]::Load($reader)
-$backgroundVideo = $window.FindName("BackgroundVideo")
-$foregroundVideo = $window.FindName("ForegroundVideo")
+$leftVideo = $window.FindName("LeftVideo")
+$centerVideo = $window.FindName("CenterVideo")
+$rightVideo = $window.FindName("RightVideo")
 $textCanvas = $window.FindName("TextCanvas")
+$warningBanner = $window.FindName("WarningBanner")
 $warningText = $window.FindName("WarningText")
 $dismissButton = $window.FindName("DismissButton")
 
@@ -94,14 +144,14 @@ $script:textVelX = 7.0
 $script:textVelY = 5.5
 
 function Update-WarningTextPosition {
-  if (-not $textCanvas -or -not $warningText) {
+  if (-not $textCanvas -or -not $warningBanner) {
     return
   }
 
   $canvasWidth = [Math]::Max(0.0, $textCanvas.ActualWidth)
   $canvasHeight = [Math]::Max(0.0, $textCanvas.ActualHeight)
-  $textWidth = [Math]::Max(0.0, $warningText.ActualWidth)
-  $textHeight = [Math]::Max(0.0, $warningText.ActualHeight)
+  $textWidth = [Math]::Max(0.0, $warningBanner.ActualWidth)
+  $textHeight = [Math]::Max(0.0, $warningBanner.ActualHeight)
 
   if ($canvasWidth -le 0 -or $canvasHeight -le 0 -or $textWidth -le 0 -or $textHeight -le 0) {
     return
@@ -123,8 +173,8 @@ function Update-WarningTextPosition {
     $script:textPosY = [Math]::Max(0.0, [Math]::Min($maxY, $script:textPosY))
   }
 
-  [System.Windows.Controls.Canvas]::SetLeft($warningText, $script:textPosX)
-  [System.Windows.Controls.Canvas]::SetTop($warningText, $script:textPosY)
+  [System.Windows.Controls.Canvas]::SetLeft($warningBanner, $script:textPosX)
+  [System.Windows.Controls.Canvas]::SetTop($warningBanner, $script:textPosY)
 }
 
 function Send-DismissSignal {
@@ -170,13 +220,15 @@ $null = $window.Add_KeyDown({
 $null = $window.Add_Closing({
   Send-DismissSignal
   $audioPlayer.Stop()
-  $foregroundVideo.Stop()
-  $backgroundVideo.Stop()
+  $leftVideo.Stop()
+  $centerVideo.Stop()
+  $rightVideo.Stop()
 })
 
 $null = $window.Add_ContentRendered({
-  Start-VideoLoop -Element $backgroundVideo
-  Start-VideoLoop -Element $foregroundVideo
+  Start-VideoLoop -Element $leftVideo
+  Start-VideoLoop -Element $centerVideo
+  Start-VideoLoop -Element $rightVideo
 
   $null = $audioPlayer.add_MediaEnded({
     $audioPlayer.Position = [System.TimeSpan]::Zero
